@@ -26,8 +26,8 @@
                 left: 0; 
                 top: 0; 
                 width: 100%; 
-                margin: 0 auto; /* PENTING: Menengahkan layout cetak */
-                padding: 5mm 10mm; /* Padding sangat kecil di tepi halaman cetak (A4) */
+                margin: 0 auto; 
+                padding: 5mm 10mm; 
                 box-sizing: border-box;
                 font-size: 10pt; 
             }
@@ -45,8 +45,8 @@
             .identity-box {
                 border: 1px solid black; 
                 padding: 10px;
-                margin: 0 auto 20px auto; /* Tambahkan margin auto untuk menengahkan kotak identitas */
-                width: 95%; /* Batasi lebar agar ada sedikit ruang di samping */
+                margin: 0 auto 20px auto; 
+                width: 95%; 
                 line-height: 1.5;
             }
 
@@ -67,8 +67,8 @@
             
             /* Styling Tabel Print */
             .print-layout table {
-                width: 95%; /* Batasi lebar tabel */
-                margin: 0 auto; /* PENTING: Menengahkan tabel */
+                width: 95%; 
+                margin: 0 auto; 
                 border-collapse: collapse;
                 font-size: 0.9rem;
             }
@@ -223,9 +223,10 @@
             <thead>
                 <tr>
                     <th width="5%">NO</th>
-                    <th width="45%">MATA PELAJARAN</th>
-                    <th width="15%">NILAI</th>
-                    <th width="35%">KETERANGAN</th>
+                    <th width="60%">MATA PELAJARAN</th>
+                    <th width="10%">PE 1</th>
+                    <th width="10%">PE 2</th>
+                    <th width="15%">PE 3</th>
                 </tr>
             </thead>
             <tbody id="print-table-body"></tbody>
@@ -269,42 +270,39 @@
                 div.className = 'mb-3';
                 div.innerHTML = `
                     <h5>${mapel}</h5>
-                    <div id="nilai-container-${index}">
-                        <div class="input-group mb-2">
-                            <input type="text" class="form-control" placeholder="Nilai" data-mapel="${index}">
-                            <button type="button" class="btn btn-secondary" onclick="addNilai(${index})">+</button>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>PE 1:</label>
+                            <input type="text" class="form-control" placeholder="Nilai PE 1" data-mapel="${index}" data-pe="0">
+                        </div>
+                        <div class="col-4">
+                            <label>PE 2:</label>
+                            <input type="text" class="form-control" placeholder="Nilai PE 2" data-mapel="${index}" data-pe="1">
+                        </div>
+                        <div class="col-4">
+                            <label>PE 3:</label>
+                            <input type="text" class="form-control" placeholder="Nilai PE 3" data-mapel="${index}" data-pe="2">
                         </div>
                     </div>
-                    <label>Keterangan:</label>
-                    <input type="text" class="form-control" id="keterangan-${index}">
                 `;
+                // Keterangan dihilangkan sesuai permintaan
                 container.appendChild(div);
             });
-        }
-
-        function addNilai(index) {
-            const container = document.getElementById(`nilai-container-${index}`);
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'input-group mb-2';
-            inputGroup.innerHTML = `
-                <input type="text" class="form-control" placeholder="Nilai" data-mapel="${index}">
-                <button type="button" class="btn btn-danger" onclick="removeNilai(this)">-</button>
-            `;
-            container.appendChild(inputGroup);
-        }
-
-        function removeNilai(button) {
-            button.parentElement.remove();
         }
 
         function saveData() {
             const kelas = document.getElementById('kelas').value;
             const mapelList = kelas === '1' ? mapelKelas1 : mapelKelas2;
             const mapelData = mapelList.map((mapel, index) => {
-                const nilaiInputs = document.querySelectorAll(`input[data-mapel="${index}"]`);
-                const nilai = Array.from(nilaiInputs).map(input => input.value).filter(v => v);
-                const keterangan = document.getElementById(`keterangan-${index}`).value;
-                return { nama: mapel, nilai, keterangan };
+                // Ambil nilai PE 1, PE 2, dan PE 3
+                const nilaiPE = [
+                    document.querySelector(`input[data-mapel="${index}"][data-pe="0"]`).value,
+                    document.querySelector(`input[data-mapel="${index}"][data-pe="1"]`).value,
+                    document.querySelector(`input[data-mapel="${index}"][data-pe="2"]`).value,
+                ];
+                
+                // Simpan hanya nilai PE
+                return { nama: mapel, nilai: nilaiPE };
             });
 
             const student = {
@@ -359,31 +357,23 @@
             document.getElementById('tahunAjaran').value = student.tahunAjaran;
             document.getElementById('namaSekolah').value = student.namaSekolah;
             document.getElementById('alamatSekolah').value = student.alamatSekolah;
-            updateMapel();
+            updateMapel(); // Panggil updateMapel untuk membuat ulang input
+            
+            // Isi nilai PE yang sudah ada
             student.mapel.forEach((m, i) => {
-                document.getElementById(`keterangan-${i}`).value = m.keterangan;
-                const container = document.getElementById(`nilai-container-${i}`);
-                container.innerHTML = '';
-                m.nilai.forEach(nilai => {
-                    const inputGroup = document.createElement('div');
-                    inputGroup.className = 'input-group mb-2';
-                    inputGroup.innerHTML = `
-                        <input type="text" class="form-control" placeholder="Nilai" data-mapel="${i}" value="${nilai}">
-                        <button type="button" class="btn btn-danger" onclick="removeNilai(this)">-</button>
-                    `;
-                    container.appendChild(inputGroup);
-                });
-                const addButton = document.createElement('div');
-                addButton.className = 'input-group mb-2';
-                addButton.innerHTML = `
-                    <input type="text" class="form-control" placeholder="Nilai" data-mapel="${i}">
-                    <button type="button" class="btn btn-secondary" onclick="addNilai(${i})">+</button>
-                `;
-                container.appendChild(addButton);
+                // Pastikan nilai PE ada (minimal 3, jika tidak, anggap kosong)
+                const nilai = m.nilai || ["", "", ""]; 
+                
+                // Isi input PE 1, PE 2, PE 3
+                document.querySelector(`input[data-mapel="${i}"][data-pe="0"]`).value = nilai[0] || '';
+                document.querySelector(`input[data-mapel="${i}"][data-pe="1"]`).value = nilai[1] || '';
+                document.querySelector(`input[data-mapel="${i}"][data-pe="2"]`).value = nilai[2] || '';
             });
+            
             editingIndex = index;
             showPage('input');
         }
+
 
         function printStudent(index) {
             const student = students[index];
@@ -401,12 +391,14 @@
             const tbody = document.getElementById('print-table-body');
             tbody.innerHTML = '';
             student.mapel.forEach((m, i) => {
+                const nilai = m.nilai || ["", "", ""]; // Ambil 3 nilai PE
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center">${i + 1}</td>
                     <td>${m.nama}</td>
-                    <td class="text-center">${m.nilai.join(', ')}</td>
-                    <td>${m.keterangan}</td>
+                    <td class="text-center">${nilai[0] || '-'}</td>
+                    <td class="text-center">${nilai[1] || '-'}</td>
+                    <td class="text-center">${nilai[2] || '-'}</td>
                 `;
                 tbody.appendChild(row);
             });
@@ -424,5 +416,4 @@
         });
     </script>
 </body>
-
 </html>

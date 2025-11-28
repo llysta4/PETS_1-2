@@ -1,226 +1,152 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PENILAIAN PEKAN EVALUASI - SD GRACIA 2</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nilai Rapor</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* TABEL INPUT (LAYAR BIASA) */
+    .table-input {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table-input th, .table-input td {
+        border: 1px solid black;
+        padding: 6px;
+        text-align: center;
+    }
 
-    <style>
-        body {
-            background: #f2f2f2;
+    /* TABEL PRINT DISSEMBUNYIKAN DI LAYAR */
+    .print-view {
+        display: none;
+    }
+
+    /* ===============================
+       MODE PRINT
+       =============================== */
+    @media print {
+
+        body * {
+            visibility: hidden;
         }
-        .page {
-            display: none;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 0 10px #cfcfcf;
+        .print-area, .print-area * {
+            visibility: visible;
         }
-        .active {
+        .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        /* HANYA TABEL PRINT YANG MUNCUL */
+        .print-view {
             display: block;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .print-view th, .print-view td {
+            border: 1px solid black;
+            padding: 6px;
+            text-align: left;
         }
 
-        .nilai-box {
-            border: 1px solid #ddd;
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            background: #fafafa;
+        /* SEMBUNYIKAN TABEL INPUT SAAT PRINT */
+        .table-input {
+            display: none;
         }
-
-        .mapel-title {
-            font-weight: bold;
-            margin-top: 12px;
-        }
-
-        .column {
-            width: 48%;
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        @media print {
-            .nav, .btn, .nav-tabs {
-                display: none !important;
-            }
-            body {
-                background: white;
-            }
-            .page {
-                box-shadow: none;
-            }
-        }
-    </style>
+    }
+</style>
 </head>
+<body>
 
-<body class="p-3">
+<h2>Input Nilai (Singkatan)</h2>
 
-    <!-- NAV -->
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <button class="nav-link active" onclick="showPage(1)">Halaman 1 (Print)</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" onclick="showPage(2)">Halaman 2 (Input Nilai)</button>
-        </li>
-    </ul>
+<table class="table-input">
+    <tr>
+        <th>Mapel</th>
+        <th>PE 1</th>
+        <th>PE 2</th>
+        <th>PE 3</th>
+    </tr>
 
-    <!-- PAGE 1 -->
-    <div id="page1" class="page active">
+    <tr>
+        <td>MTK</td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+    </tr>
 
-        <h3 class="text-center fw-bold mb-0">PENILAIAN PEKAN EVALUASI</h3>
-        <p class="text-center mb-4">SD GRACIA 2 BANDUNG <br> JL. Pargasih no.256, Jamika, Kota Bandung</p>
+    <tr>
+        <td>B.Indo</td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+    </tr>
 
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>NIS</th>
-                    <th>NISN</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="dataTable"></tbody>
-        </table>
-    </div>
+    <tr>
+        <td>IPA</td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+        <td><input type="number"></td>
+    </tr>
 
-    <!-- PAGE 2 -->
-    <div id="page2" class="page">
+</table>
 
-        <div class="column">
-            <h4 class="fw-bold text-center">KELAS 1</h4>
-            <div id="kelas1"></div>
-        </div>
+<button onclick="window.print()">Print</button>
 
-        <div class="column ms-2">
-            <h4 class="fw-bold text-center">KELAS 2</h4>
-            <div id="kelas2"></div>
-        </div>
+<!-- =======================
+     AREA PRINT
+     ======================= -->
+<div class="print-area">
+    <h2 style="text-align:center">RAPOR SISWA</h2>
 
-    </div>
+    <table class="print-view">
+        <tr>
+            <th>Mata Pelajaran</th>
+            <th>Nilai</th>
+        </tr>
+
+        <tr>
+            <td>Matematika</td>
+            <td id="pmtk"></td>
+        </tr>
+
+        <tr>
+            <td>Bahasa Indonesia</td>
+            <td id="pbindo"></td>
+        </tr>
+
+        <tr>
+            <td>Ilmu Pengetahuan Alam</td>
+            <td id="pipa"></td>
+        </tr>
+
+    </table>
+</div>
 
 <script>
-// ========================= DATA SISWA ===============================
+    function ambilNilai() {
+        const inputRows = document.querySelectorAll(".table-input tr");
 
-const kelas1 = [
-    { nama: "KHENSI RAFALDI PRIYADI", nis: "252601001", nisn: "-", mapel: 10 },
-    { nama: "KIMBERLY BELLVANIA HERYANTO", nis: "252601002", nisn: "317378079", mapel: 10 },
-    { nama: "YOSIA CHARISDEO DEIS", nis: "252601008", nisn: "-", mapel: 10 }
-];
+        document.getElementById("pmtk").innerText =
+            ambilSatuBaris(inputRows[1]);
 
-const kelas2 = [
-    { nama: "STELLA ANGELINA YANUBI", nis: "242501003", nisn: "3176946273", mapel: 11 },
-    { nama: "FADHIL BAYU AQIRIN", nis: "252602006", nisn: "-", mapel: 11 },
-    { nama: "GWYNETH TANUWIDJAJA", nis: "252602004", nisn: "3169999681", mapel: 11 }
-];
+        document.getElementById("pbindo").innerText =
+            ambilSatuBaris(inputRows[2]);
 
-const mapelKelas1 = [
-"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
-"PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP","BAHASA INGGRIS","TIK"
-];
+        document.getElementById("pipa").innerText =
+            ambilSatuBaris(inputRows[3]);
+    }
 
-const mapelKelas2 = [
-"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
-"PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP",
-"BAHASA INGGRIS","TIK","PRAMUKA"
-];
+    function ambilSatuBaris(row) {
+        let inputs = row.querySelectorAll("input");
+        return `PE1: ${inputs[0].value}, PE2: ${inputs[1].value}, PE3: ${inputs[2].value}`;
+    }
 
-// ========================= PAGE SWITCH ===============================
-
-function showPage(no) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById("page" + no).classList.add("active");
-
-    document.querySelectorAll(".nav-link").forEach(n => n.classList.remove("active"));
-    document.querySelectorAll(".nav-link")[no - 1].classList.add("active");
-}
-
-// ========================= RENDER HALAMAN 1 ===============================
-
-function renderTable() {
-    const table = document.getElementById("dataTable");
-    table.innerHTML = "";
-
-    let nomor = 1;
-
-    kelas1.forEach(s => {
-        table.innerHTML += tr(nomor++, s.nama, "1", s.nis, s.nisn);
-    });
-
-    kelas2.forEach(s => {
-        table.innerHTML += tr(nomor++, s.nama, "2", s.nis, s.nisn);
-    });
-}
-
-function tr(no, nama, kelas, nis, nisn) {
-    return `
-    <tr>
-        <td>${no}</td>
-        <td>${nama}</td>
-        <td>${kelas}</td>
-        <td>${nis}</td>
-        <td>${nisn}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="window.print()">Print</button></td>
-    </tr>`;
-}
-
-// ========================= RENDER HALAMAN 2 ===============================
-
-function renderInput() {
-    renderKelas("kelas1", kelas1, mapelKelas1);
-    renderKelas("kelas2", kelas2, mapelKelas2);
-}
-
-function renderKelas(divID, dataSiswa, mapelList) {
-    const div = document.getElementById(divID);
-    div.innerHTML = "";
-
-    dataSiswa.forEach(s => {
-        div.innerHTML += `
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5>${s.nama}</h5>
-                    <small>NIS: ${s.nis} | NISN: ${s.nisn}</small>
-                    <hr>
-
-                    ${mapelList.map(m => mapelForm(s.nama, m)).join("")}
-                </div>
-            </div>
-        `;
-    });
-}
-
-function mapelForm(nama, mapel) {
-    return `
-        <p class="mapel-title">${mapel}</p>
-
-        ${["PE1", "PE2", "PE3"].map(pe =>
-        `<div>
-            <label>${pe}</label>
-            <div id="${nama}-${mapel}-${pe}">
-                <input type="number" class="form-control mb-1 nilai-box" placeholder="Nilai">
-            </div>
-            <button class="btn btn-sm btn-primary mb-2" onclick="tambahNilai('${nama}-${mapel}-${pe}')">+ Tambah Nilai</button>
-        </div>`
-        ).join("")}
-        <hr>
-    `;
-}
-
-function tambahNilai(id) {
-    const div = document.getElementById(id);
-    div.innerHTML += `<input type="number" class="form-control mb-1 nilai-box" placeholder="Nilai">`;
-}
-
-// ========================= START ===============================
-
-renderTable();
-renderInput();
-
+    // Saat print, otomatis perbarui nilai
+    window.onbeforeprint = ambilNilai;
 </script>
 
 </body>

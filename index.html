@@ -10,7 +10,7 @@
     :root{
         --bg: #f2f6fb; /* page background */
         --card: #ffffff;
-        --blue-pastel: #d9ecff; /* pastel biru untuk print & accents */
+        --blue-pastel: #d9ecff;
         --blue-600: #3b82f6;
     }
     body{ background: var(--bg); font-family: system-ui, sans-serif; padding:18px; }
@@ -18,46 +18,106 @@
     .page { display:none; padding:20px; background:var(--card); border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.08); }
     .active { display:block; }
 
-    /* table page 1 */
+    /* table page 1 (Data Siswa) */
     .table thead th { background: var(--blue-pastel); font-weight:700; }
 
-    /* kelas input layout */
-    .card-student { margin-bottom:18px; }
-    .mapel-row { display:flex; gap:10px; flex-wrap:wrap; }
-    .mapel-item { flex: 1 1 calc(33% - 10px); background:#fbfdff; padding:10px; border-radius:8px; border:1px solid #e6f0ff; }
-    .mapel-title { font-weight:700; font-size:0.9rem; margin-bottom:6px; }
-
-    .nilai-box { border:1px solid #ddd; padding:6px; margin-bottom:6px; border-radius:6px; background:#fff; width:100%; box-sizing:border-box; }
-
     .nav-tabs { margin-bottom:18px; }
+
+    /* >>>>>> CSS BARU UNTUK INPUT TABEL <<<<<< */
+    .input-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .input-table th { background: #e6f0ff; font-size: 0.8rem; padding: 8px 4px; text-align: center; border: 1px solid #cce0ff; }
+    .input-table td { border: 1px solid #cce0ff; padding: 0; vertical-align: top; }
+    .input-table tbody tr:hover { background: #f9fcff; }
     
-    /* >>>>>> CSS BARU UNTUK PE HORIZONTAL <<<<<< */
-    .pe-input-group {
+    .mapel-cell { padding: 4px; text-align: center; }
+    .mapel-cell .pe-input-group {
         display: flex;
-        gap: 8px; /* Jarak antar kolom PE */
-        align-items: flex-start;
-        margin-bottom: 10px;
+        flex-direction: column; /* Input PE kembali vertikal di dalam cell Mapel */
+        gap: 2px;
+        margin: 0;
     }
-    .pe-item {
-        flex-grow: 1; /* Agar setiap PE mengisi ruang yang sama */
-        min-width: 0;
+    .mapel-cell .pe-item {
+        flex-grow: 1;
+        text-align: center;
+        padding: 0;
     }
-    .pe-item .nilai-box {
-        margin-bottom: 4px;
+    .mapel-cell .pe-item label {
+        display: none; /* Sembunyikan label PE1, PE2, PE3 di dalam sel tabel */
+    }
+
+    .nilai-box { 
+        border: none;
+        padding: 4px 6px;
+        margin: 0;
+        border-radius: 0;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.85rem;
+        text-align: center;
+        background: transparent;
+    }
+    .nilai-box:focus {
+        background: #fff;
+        outline: 1px solid var(--blue-600);
+    }
+    
+    .mapel-title-rotated {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        white-space: nowrap;
+        height: 120px; /* Atur tinggi header */
+        line-height: 1.1;
+        padding: 8px 4px;
+        font-weight: 700;
+        font-size: 0.75rem;
+    }
+    
+    .header-pe {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #3b82f6;
+    }
+
+    /* Table body styles */
+    .nama-cell { 
+        text-align: left !important; 
+        font-weight: 600; 
+        padding: 8px !important;
+        font-size: 0.9rem;
+        vertical-align: middle !important;
+    }
+    .no-cell { 
+        text-align: center; 
+        width: 30px; 
+        vertical-align: middle !important;
         font-size: 0.9rem;
     }
-    /* >>>>>> END CSS BARU <<<<<< */
+    .action-cell {
+        width: 100px;
+        text-align: center;
+        vertical-align: middle !important;
+        padding: 4px !important;
+    }
+    
+    /* Tombol Simpan/Print di dalam sel */
+    .input-table .btn-sm {
+        padding: 0.1rem 0.3rem;
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+        width: 90%;
+    }
 
-    /* print-specific styles for printed student page (we'll open in new window but keep similar) */
+    /* >>>>>> CSS PRINT MODIFIKASI <<<<<< */
     @media print{
-        /* >>>>>> CSS PRINT MODIFIKASI <<<<<< */
         body{ background: #fff; }
         .nav, .btn, .nav-tabs { display:none !important; }
         .page { box-shadow:none; }
-        
         .print-header{ background: linear-gradient(90deg, #d9ecff 0%, #eef8ff 100%); padding:12px; border-radius:8px; text-align:center; margin-bottom:12px; border:1px solid #cfe8ff; color: #004d99; }
-        .print-meta-grid { margin-top:10px; display:grid; grid-template-columns: 1fr 1fr; gap:6px 22px; margin-bottom: 20px; }
-        .meta-label{ font-weight:700; width:110px; display:inline-block; }
+        /* CSS print lainnya (dipertahankan dari revisi sebelumnya) */
+        .meta{ margin-top:10px; display:grid; grid-template-columns: 1fr 1fr; gap:6px 22px; margin-bottom: 20px; }
+        .meta .item{ font-size:14px; }
+        .meta .label{ font-weight:700; width:110px; display:inline-block; }
+        table{ width:100%; border-collapse:collapse; margin-top:12px; }
         table th, table td{ border:1px solid #99c2ff; padding:8px; text-align:left; font-size: 14px; }
         table thead th{ background: #b3d9ff; font-weight:700; text-align: center; }
         table td.mapel-col { width: 45%; text-align: left; }
@@ -65,7 +125,7 @@
         .signatures { display: flex; justify-content: space-between; margin-top: 40px; font-size: 14px; }
         .signature-box { text-align: center; width: 40%; }
         .signature-line { margin-top: 60px; border-bottom: 1px solid #333; display: inline-block; width: 100%; }
-        /* >>>>>> END CSS PRINT MODIFIKASI <<<<<< */
+        /* .small-note sudah dihapus/dibiarkan kosong */
     }
 
     /* small screens adjust mapel flex */
@@ -144,12 +204,12 @@ const kelas2 = [
 ];
 
 const mapelKelas1 = [
-" PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
+"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
 "PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP","BAHASA INGGRIS","TIK"
 ];
 
 const mapelKelas2 = [
-" PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
+"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
 "PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP",
 "BAHASA INGGRIS","TIK","PRAMUKA"
 ];
@@ -159,7 +219,7 @@ const peList = ["PE1","PE2","PE3"];
 /* ========== HELPERS ========== */
 
 function sanitizeId(str){
-    return str.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'');
+    return str.trim().replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'');
 }
 
 /* =================== PAGINATION / NAV =================== */
@@ -196,92 +256,80 @@ function renderTable(){
 /* buka halaman input sesuai kelas dan scroll ke siswa */
 function openStudentInput(nis){
     const isK1 = kelas1.find(s=>s.nis===nis);
-    if(isK1){ showPage(2); document.getElementById("kelas1").scrollIntoView({behavior:'smooth'}); highlightCard(nis); }
-    else { showPage(3); document.getElementById("kelas2").scrollIntoView({behavior:'smooth'}); highlightCard(nis); }
-    setTimeout(()=> { const el = document.getElementById('card-'+nis); if(el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 250);
+    if(isK1){ showPage(2); }
+    else { showPage(3); }
+    // Di format tabel, tidak perlu scroll ke card
 }
 
-function highlightCard(nis){
-    document.querySelectorAll('.card-student').forEach(c => c.style.boxShadow = '');
-    const c = document.getElementById('card-'+nis);
-    if(c) c.style.boxShadow = '0 8px 20px rgba(59,130,246,0.12)';
-}
-
-/* =================== RENDER HALAMAN 2 & 3 (INPUT) =================== */
+/* =================== RENDER HALAMAN 2 & 3 (INPUT TABEL BARU) =================== */
 
 function renderInput(){
-    renderKelasDiv("kelas1", kelas1, mapelKelas1);
-    renderKelasDiv("kelas2", kelas2, mapelKelas2);
+    renderKelasDiv("kelas1", kelas1, mapelKelas1, 1);
+    renderKelasDiv("kelas2", kelas2, mapelKelas2, 2);
 }
 
-function renderKelasDiv(divId, dataSiswa, mapelList){
+function renderKelasDiv(divId, dataSiswa, mapelList, kelas){
     const container = document.getElementById(divId);
     container.innerHTML = "";
-    dataSiswa.forEach(s=>{
-        const card = document.createElement('div');
-        card.className = 'card card-student';
-        card.id = 'card-'+s.nis;
-        card.innerHTML = `
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <h5 class="mb-0">${s.nama}</h5>
-                        <small>NIS: ${s.nis} | NISN: ${s.nisn}</small>
-                    </div>
-                    <div class="text-end">
-                        <button class="btn btn-primary btn-sm mb-1" onclick="saveStudent('${s.nis}', ${JSON.stringify(mapelList)})">Simpan</button>
-                        <button class="btn btn-outline-primary btn-sm mb-1" onclick="printStudent('${s.nis}')">Print</button>
-                    </div>
-                </div>
-                <hr>
-                <div class="mapel-row">
-                    ${mapelList.map(m => makeMapelHTML(s.nis, m)).join('')}
-                </div>
-            </div>
-        `;
-        container.appendChild(card);
+    
+    // Header Table
+    let tableHtml = `<table class="input-table"><thead><tr>
+                        <th class="no-cell" rowspan="2">No</th>
+                        <th class="nama-cell" rowspan="2">NAMA</th>
+                        ${mapelList.map(m => `<th colspan="3"><span class="mapel-title-rotated">${m.toUpperCase()}</span></th>`).join('')}
+                        <th class="action-cell" rowspan="2">Aksi</th>
+                    </tr><tr>
+                        ${mapelList.map(() => peList.map(pe => `<th class="header-pe">${pe.replace('PE','')}</th>`).join('')).join('')}
+                    </tr></thead><tbody>`;
+
+    // Data Rows
+    dataSiswa.forEach((s, index)=>{
+        tableHtml += `<tr id="card-${s.nis}">
+                        <td class="no-cell">${index + 1}</td>
+                        <td class="nama-cell">${s.nama}</td>
+                        ${mapelList.map(m => makeMapelInputCell(s.nis, m)).join('')}
+                        <td class="action-cell">
+                            <button class="btn btn-primary btn-sm mb-1" onclick="saveStudent('${s.nis}', ${JSON.stringify(mapelList)})">Simpan</button>
+                            <button class="btn btn-outline-primary btn-sm" onclick="printStudent('${s.nis}')">Print</button>
+                        </td>
+                      </tr>`;
     });
+    
+    tableHtml += `</tbody></table>`;
+    container.innerHTML = tableHtml;
 
     // after created, load stored values
     loadAllFromStorage();
 }
 
-/* make single mapel block - KODE BARU UNTUK INPUT HORIZONTAL */
-function makeMapelHTML(nis, mapel){
+/* make single mapel cell for one student, containing PE1, PE2, PE3 inputs */
+function makeMapelInputCell(nis, mapel){
     const mid = sanitizeId(mapel);
     return `
-        <div class="mapel-item">
-            <div class="mapel-title">${mapel}</div>
-            
-            <div class="pe-input-group">
-            ${peList.map(pe => `
-                <div class="pe-item"> 
-                    <label style="font-size:0.85rem;font-weight:600;display:block;">${pe}</label>
-                    <div id="inputs-${nis}-${mid}-${pe}">${makeSingleInput(nis, mapel, pe)}</div>
-                    <button class="btn btn-sm btn-outline-secondary mt-1 w-100" onclick="tambahNilai('${nis}','${mapel}','${pe}')">+ Nilai</button>
+        ${peList.map(pe => `
+            <td class="mapel-cell">
+                <div class="pe-input-group">
+                    <div class="pe-item"> 
+                        <label>${pe}</label>
+                        <div id="inputs-${nis}-${mid}-${pe}">${makeSingleInput(nis, mapel, pe)}</div>
+                        <button class="btn btn-sm btn-outline-secondary mt-1 w-100" style="display:none;" onclick="tambahNilai('${nis}','${mapel}','${pe}')">+ Nilai</button>
+                    </div>
                 </div>
-            `).join('')}
-            </div>
-
-        </div>
+            </td>
+        `).join('')}
     `;
 }
 
+
 /* default 1 input element returned as html string */
 function makeSingleInput(nis,mapel,pe){
-    return `<input type="number" class="nilai-box" placeholder="Nilai" />`;
+    // Kita hanya perlu 1 input nilai di skema tabel baru ini, karena setiap PE punya kolom sendiri
+    return `<input type="number" class="nilai-box" placeholder="-" maxlength="3" oninput="if(this.value.length>this.maxLength) this.value=this.value.slice(0,this.maxLength)" />`;
 }
 
-/* append new input to container */
+/* append new input to container - FUNGSI INI KINI TIDAK RELEVAN UNTUK FORMAT TABEL PE TUNGGAL */
 function tambahNilai(nis,mapel,pe){
-    const id = 'inputs-'+nis+'-'+sanitizeId(mapel)+'-'+pe;
-    const cont = document.getElementById(id);
-    if(!cont) return;
-    const inp = document.createElement('input');
-    inp.type = 'number';
-    inp.className = 'nilai-box';
-    inp.placeholder = 'Nilai';
-    cont.appendChild(inp);
+    alert('Fungsi tambah nilai dimatikan di format tabel. Hanya satu input per PE diperbolehkan.');
 }
 
 /* collect & save student's nilai to localStorage */
@@ -294,23 +342,22 @@ function saveStudent(nis, mapelList){
         const mkey = mapel.trim();
         nilai[mkey] = {};
         peList.forEach(pe => {
-            const inputs = Array.from(document.querySelectorAll(`#inputs-${nis}-${sanitizeId(mapel)}-${pe} input, #inputs-${nis}-${sanitizeId(mapel)}-${pe} .nilai-box, #inputs-${nis}-${sanitizeId(mapel)}-${pe} input[type="number"]`));
-            // fallback: if the created inputs are direct children (we used inputs, not nested). Use querySelectorAll inside container.
+            // Karena sekarang hanya ada SATU input per PE per Mapel:
             const container = document.getElementById(`inputs-${nis}-${sanitizeId(mapel)}-${pe}`);
+            const input = container ? container.querySelector('input') : null;
             const vals = [];
-            if(container){
-                container.querySelectorAll('input').forEach(i => {
-                    const v = i.value.trim();
-                    if(v !== '') vals.push(Number(v));
-                });
+            if(input){
+                const v = input.value.trim();
+                if(v !== '') vals.push(Number(v));
             }
-            nilai[mkey][pe] = vals; // array of numbers (could be empty)
+            nilai[mkey][pe] = vals; // array of numbers (bisa kosong atau berisi 1 nilai)
         });
     });
 
     localStorage.setItem('nilai_'+nis, JSON.stringify({ siswa: student, nilai }));
     // visual feedback
-    const btns = document.querySelectorAll(`#card-${nis} .btn-primary`);
+    const btnContainer = document.querySelector(`#card-${nis} .action-cell`);
+    const btns = btnContainer.querySelectorAll('.btn-primary');
     btns.forEach(b => {
         b.innerText = 'Tersimpan ✓';
         setTimeout(()=> b.innerText = 'Simpan', 1100);
@@ -324,22 +371,18 @@ function loadStudentToInputs(nis){
     try{
         const data = JSON.parse(raw);
         const nilai = data.nilai || {};
-        Object.keys(nilai).forEach(mapel => {
+        const mapelList = kelas1.find(s=>s.nis===nis) ? mapelKelas1 : mapelKelas2;
+        
+        mapelList.forEach(mapel => {
             peList.forEach(pe => {
-                const arr = nilai[mapel] && nilai[mapel][pe] ? nilai[mapel][pe] : [];
+                const arr = nilai[mapel.trim()] && nilai[mapel.trim()][pe] ? nilai[mapel.trim()][pe] : [];
                 const container = document.getElementById(`inputs-${nis}-${sanitizeId(mapel)}-${pe}`);
                 if(!container) return;
-                // clear existing inputs then re-create according to saved
-                container.innerHTML = '';
-                if(arr.length === 0){
-                    // create one empty input (so UI consistent)
-                    const inp = document.createElement('input'); inp.type='number'; inp.className='nilai-box'; inp.placeholder='Nilai';
-                    container.appendChild(inp);
-                } else {
-                    arr.forEach(v => {
-                        const inp = document.createElement('input'); inp.type='number'; inp.className='nilai-box'; inp.placeholder='Nilai'; inp.value = v;
-                        container.appendChild(inp);
-                    });
+                
+                // Set nilai ke input tunggal
+                const input = container.querySelector('input');
+                if(input){
+                    input.value = arr.length > 0 ? arr[0] : '';
                 }
             });
         });
@@ -356,7 +399,7 @@ function findStudentByNIS(nis){
     return kelas1.find(s=>s.nis===nis) || kelas2.find(s=>s.nis===nis) || null;
 }
 
-/* =================== PRINT PER ORANG - KODE BARU =================== */
+/* =================== PRINT PER ORANG - KODE BARU DENGAN FASE B DAN TANPA TANGGAL CETAK =================== */
 
 /* Create printable HTML for a student and open new window to print */
 function printStudent(nis){
@@ -388,8 +431,8 @@ function printStudent(nis){
 
     // build HTML
     const win = window.open('','_blank','width=900,height=700');
-    const style = `
-        <style>
+    // NOTE: Gaya CSS untuk print sudah didefinisikan dalam tag <style> di atas
+    const style = `<style>
             body{ font-family: Arial, Helvetica, sans-serif; padding:18px; color:#1f2937; }
             .print-header{ background: linear-gradient(90deg, #d9ecff 0%, #eef8ff 100%); padding:12px; border-radius:8px; text-align:center; margin-bottom:12px; border:1px solid #cfe8ff; color: #004d99; }
             h2{ margin:0; font-size:18px; color:#0f172a; }
@@ -404,8 +447,6 @@ function printStudent(nis){
             .signatures { display: flex; justify-content: space-between; margin-top: 40px; font-size: 14px; }
             .signature-box { text-align: center; width: 40%; }
             .signature-line { margin-top: 60px; border-bottom: 1px solid #333; display: inline-block; width: 100%; }
-            .small-note{ font-size:12px; color:#475569; margin-top:20px; text-align: center; }
-            /* Media print untuk menyesuaikan warna dan batas */
             @media print {
                 body{ background: #fff; }
                 table th, table td { border-color: #99c2ff; }
@@ -416,10 +457,10 @@ function printStudent(nis){
 
     // meta fields
     const semester = 'GANJIL';
-    const fase = 'Penilaian Pekan Evaluasi';
+    const fase = 'Fase B'; // <--- MODIFIKASI 1: Set Fase B
     const kelasSiswa = kelas1.find(s=>s.nis===nis) ? '1' : '2';
     
-    // Sesuaikan metadata agar sesuai dengan gambar
+    // HTML Metadata
     const htmlMeta = `
         <div class="print-header">
             <h2>PEKAN EVALUASI SEMESTER GANJIL</h2>
@@ -444,7 +485,8 @@ function printStudent(nis){
 
     // build subjects table
     const nilai = obj.nilai || {};
-    const mapelKeys = Object.keys(nilai).sort();
+    const mapelList = kelas1.find(s=>s.nis===nis) ? mapelKelas1 : mapelKelas2;
+    const mapelKeys = mapelList.map(m => m.trim()).sort();
     
     let tableHtml = `<table><thead><tr>
                         <th style="width:5%">No</th>
@@ -457,10 +499,10 @@ function printStudent(nis){
     mapelKeys.forEach((mp, index)=>{
         const peObj = nilai[mp];
         
-        // Ambil array nilai, lalu gabungkan dengan koma. Jika kosong, tampilkan '-'
-        const pe1 = (peObj && peObj['PE1'] && peObj['PE1'].length) ? peObj['PE1'].join(', ') : '-';
-        const pe2 = (peObj && peObj['PE2'] && peObj['PE2'].length) ? peObj['PE2'].join(', ') : '-';
-        const pe3 = (peObj && peObj['PE3'] && peObj['PE3'].length) ? peObj['PE3'].join(', ') : '-';
+        // Ambil nilai pertama (karena format input sekarang tunggal)
+        const pe1 = (peObj && peObj['PE1'] && peObj['PE1'].length) ? peObj['PE1'][0] : '-';
+        const pe2 = (peObj && peObj['PE2'] && peObj['PE2'].length) ? peObj['PE2'][0] : '-';
+        const pe3 = (peObj && peObj['PE3'] && peObj['PE3'].length) ? peObj['PE3'][0] : '-';
 
         tableHtml += `<tr>
                         <td style="text-align:center;">${index + 1}</td>
@@ -473,7 +515,7 @@ function printStudent(nis){
     
     tableHtml += `</tbody></table>`;
     
-    // Signature section based on the image
+    // Signature section 
     const signatureHtml = `
         <div class="signatures">
             <div class="signature-box">
@@ -487,9 +529,9 @@ function printStudent(nis){
         </div>
     `;
 
-    // final html
+    // final html - Baris small-note/tanggal cetak dihapus/tidak disertakan
     win.document.open();
-    win.document.write(`<html><head><title>Print - ${student.nama}</title>${style}</head><body>${htmlMeta}${tableHtml}${signatureHtml}<div class="small-note">Dicetak dari sistem penilaian - ${new Date().toLocaleString()}</div></body></html>`);
+    win.document.write(`<html><head><title>Print - ${student.nama}</title>${style}</head><body>${htmlMeta}${tableHtml}${signatureHtml}</body></html>`); // <--- MODIFIKASI 2: Dihilangkan
     win.document.close();
 
     // print after short delay to allow render

@@ -1,227 +1,432 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PENILAIAN PEKAN EVALUASI - SD GRACIA 2</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PENILAIAN PEKAN EVALUASI - SD GRACIA 2</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    :root{
+        --bg: #f2f6fb; /* page background */
+        --card: #ffffff;
+        --blue-pastel: #d9ecff; /* pastel biru untuk print & accents */
+        --blue-600: #3b82f6;
+    }
+    body{ background: var(--bg); font-family: system-ui, sans-serif; padding:18px; }
 
-    <style>
-        body {
-            background: #f2f2f2;
-        }
-        .page {
-            display: none;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 0 10px #cfcfcf;
-        }
-        .active {
-            display: block;
-        }
+    .page { display:none; padding:20px; background:var(--card); border-radius:12px; box-shadow:0 4px 14px rgba(0,0,0,0.08); }
+    .active { display:block; }
 
-        .nilai-box {
-            border: 1px solid #ddd;
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            background: #fafafa;
-        }
+    /* table page 1 */
+    .table thead th { background: var(--blue-pastel); font-weight:700; }
 
-        .mapel-title {
-            font-weight: bold;
-            margin-top: 12px;
-            margin-bottom: 5px;
-        }
+    /* kelas input layout */
+    .card-student { margin-bottom:18px; }
+    .mapel-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .mapel-item { flex: 1 1 calc(33% - 10px); background:#fbfdff; padding:10px; border-radius:8px; border:1px solid #e6f0ff; }
+    .mapel-title { font-weight:700; font-size:0.9rem; margin-bottom:6px; }
 
-        .mapel-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .nilai-box { border:1px solid #ddd; padding:6px; margin-bottom:6px; border-radius:6px; background:#fff; width:100%; box-sizing:border-box; }
 
-        .mapel-item {
-            flex: 1 1 calc(33% - 10px);
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-        }
+    .nav-tabs { margin-bottom:18px; }
 
-        @media print {
-            .nav, .btn, .nav-tabs {
-                display: none !important;
-            }
-            body {
-                background: white;
-            }
-            .page {
-                box-shadow: none;
-            }
-        }
-    </style>
+    /* print-specific styles for printed student page (we'll open in new window but keep similar) */
+    .print-header { background: linear-gradient(90deg, rgba(217,236,255,1) 0%, rgba(235,245,255,1) 100%); padding:14px; border-radius:8px; text-align:center; margin-bottom:14px; }
+    .print-meta { display:grid; grid-template-columns: 1fr 1fr; gap:6px 18px; margin-bottom:12px; }
+    .meta-label { font-weight:600; width:120px; display:inline-block; }
+
+    /* hide nav/buttons while printing (for normal pages) */
+    @media print{
+        .nav, .btn, .nav-tabs { display:none !important; }
+        body { background: #fff; }
+        .page { box-shadow:none; }
+    }
+
+    /* small screens adjust mapel flex */
+    @media (max-width:720px){
+        .mapel-item { flex: 1 1 calc(50% - 10px); }
+    }
+    @media (max-width:420px){
+        .mapel-item { flex: 1 1 100%; }
+    }
+
+</style>
 </head>
+<body>
 
-<body class="p-3">
+<!-- NAV -->
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item"><button class="nav-link active" onclick="showPage(1)">Halaman 1 - Data Siswa</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showPage(2)">Halaman 2 - Input Nilai (Kelas 1)</button></li>
+    <li class="nav-item"><button class="nav-link" onclick="showPage(3)">Halaman 3 - Input Nilai (Kelas 2)</button></li>
+</ul>
 
-    <!-- NAV -->
-    <ul class="nav nav-tabs mb-3">
-        <li class="nav-item">
-            <button class="nav-link active" onclick="showPage(1)">Halaman 1 (Print)</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" onclick="showPage(2)">Halaman 2 (Input Nilai)</button>
-        </li>
-    </ul>
+<!-- PAGE 1: DATA SISWA -->
+<div id="page1" class="page active">
 
-    <!-- PAGE 1 -->
-    <div id="page1" class="page active">
-        <h3 class="text-center fw-bold mb-0">PENILAIAN PEKAN EVALUASI</h3>
-        <p class="text-center mb-4">SD GRACIA 2 BANDUNG <br> JL. Pargasih no.256, Jamika, Kota Bandung</p>
+    <h3 class="text-center fw-bold mb-0">PENILAIAN PEKAN EVALUASI</h3>
+    <p class="text-center mb-4">SD GRACIA 2 BANDUNG <br> JL. Pargasih no.256, Jamika, Kota Bandung</p>
 
-        <table class="table table-bordered text-center">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>NIS</th>
-                    <th>NISN</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="dataTable"></tbody>
-        </table>
+    <table class="table table-bordered text-center align-middle">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>NIS</th>
+                <th>NISN</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+    </table>
+</div>
+
+<!-- PAGE 2: INPUT KELAS 1 -->
+<div id="page2" class="page">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">INPUT NILAI - KELAS 1</h4>
+        <div><button class="btn btn-outline-secondary" onclick="loadAllFromStorage()">Muat dari LocalStorage</button></div>
     </div>
+    <div id="kelas1"></div>
+</div>
 
-    <!-- PAGE 2 -->
-    <div id="page2" class="page">
-
-        <h4 class="fw-bold text-center mb-3">KELAS 1</h4>
-        <div id="kelas1"></div>
-
-        <h4 class="fw-bold text-center mt-4 mb-3">KELAS 2</h4>
-        <div id="kelas2"></div>
-
+<!-- PAGE 3: INPUT KELAS 2 -->
+<div id="page3" class="page">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">INPUT NILAI - KELAS 2</h4>
+        <div><button class="btn btn-outline-secondary" onclick="loadAllFromStorage()">Muat dari LocalStorage</button></div>
     </div>
+    <div id="kelas2"></div>
+</div>
 
 <script>
-// ========================= DATA SISWA ===============================
+/* =================== DATA SISWA & MAPEL =================== */
+
+const sekolah = {
+    nama: "SD GRACIA 2 BANDUNG",
+    alamat: "JL. Pargasih no.256, Jamika, Kota Bandung",
+    tahunAjaran: "2024 / 2025"
+};
 
 const kelas1 = [
-    { nama: "KHENSI RAFALDI PRIYADI", nis: "252601001", nisn: "-", mapel: 10 },
-    { nama: "KIMBERLY BELLVANIA HERYANTO", nis: "252601002", nisn: "317378079", mapel: 10 },
-    { nama: "YOSIA CHARISDEO DEIS", nis: "252601008", nisn: "-", mapel: 10 }
+    { nama: "KHENSI RAFALDI PRIYADI", nis: "252601001", nisn: "-" },
+    { nama: "KIMBERLY BELLVANIA HERYANTO", nis: "252601002", nisn: "317378079" },
+    { nama: "YOSIA CHARISDEO DEIS", nis: "252601008", nisn: "-" }
 ];
 
 const kelas2 = [
-    { nama: "STELLA ANGELINA YANUBI", nis: "242501003", nisn: "3176946273", mapel: 11 },
-    { nama: "FADHIL BAYU AQIRIN", nis: "252602006", nisn: "-", mapel: 11 },
-    { nama: "GWYNETH TANUWIDJAJA", nis: "252602004", nisn: "3169999681", mapel: 11 }
+    { nama: "STELLA ANGELINA YANUBI", nis: "242501003", nisn: "3176946273" },
+    { nama: "FADHIL BAYU AQIRIN", nis: "252602006", nisn: "-" },
+    { nama: "GWYNETH TANUWIDJAJA", nis: "252602004", nisn: "3169999681" }
 ];
 
 const mapelKelas1 = [
-"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
+" PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
 "PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP","BAHASA INGGRIS","TIK"
 ];
 
 const mapelKelas2 = [
-"PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
+" PENDIDIKAN AGAMA DAN BUDI PEKERTI","PENDIDIKAN PANCASILA","BAHASA INDONESIA","MATEMATIKA",
 "PJOK","SENI BUDAYA DAN PRAKARYA","BAHASA SUNDA","PENDIDIKAN LINGKUNGAN HIDUP",
 "BAHASA INGGRIS","TIK","PRAMUKA"
 ];
 
-// ========================= PAGE SWITCH ===============================
+const peList = ["PE1","PE2","PE3"];
 
-function showPage(no) {
+/* ========== HELPERS ========== */
+
+function sanitizeId(str){
+    return str.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_\-]/g,'');
+}
+
+/* =================== PAGINATION / NAV =================== */
+
+function showPage(n){
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-    document.getElementById("page" + no).classList.add("active");
-
-    document.querySelectorAll(".nav-link").forEach(n => n.classList.remove("active"));
-    document.querySelectorAll(".nav-link")[no - 1].classList.add("active");
+    document.getElementById("page"+n).classList.add("active");
+    document.querySelectorAll(".nav-link").forEach((el,i)=> el.classList.toggle("active", i===n-1));
 }
 
-// ========================= RENDER HALAMAN 1 ===============================
+/* =================== RENDER HALAMAN 1 =================== */
 
-function renderTable() {
-    const table = document.getElementById("dataTable");
-    table.innerHTML = "";
-
-    let nomor = 1;
-
-    kelas1.forEach(s => {
-        table.innerHTML += tr(nomor++, s.nama, "1", s.nis, s.nisn);
+function renderTable(){
+    const tbody = document.getElementById("dataTable");
+    tbody.innerHTML = "";
+    let i=1;
+    [...kelas1, ...kelas2].forEach(s => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${i++}</td>
+            <td class="text-start">${s.nama}</td>
+            <td>${ kelas1.find(x=>x.nis===s.nis)? "1":"2" }</td>
+            <td>${s.nis}</td>
+            <td>${s.nisn}</td>
+            <td>
+                <button class="btn btn-sm btn-primary me-1" onclick="printStudent('${s.nis}')">Print</button>
+                <button class="btn btn-sm btn-success" onclick="openStudentInput('${s.nis}')">Buka Input</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
     });
-
-    kelas2.forEach(s => {
-        table.innerHTML += tr(nomor++, s.nama, "2", s.nis, s.nisn);
-    });
 }
 
-function tr(no, nama, kelas, nis, nisn) {
-    return `
-    <tr>
-        <td>${no}</td>
-        <td>${nama}</td>
-        <td>${kelas}</td>
-        <td>${nis}</td>
-        <td>${nisn}</td>
-        <td><button class="btn btn-danger btn-sm" onclick="window.print()">Print</button></td>
-    </tr>`;
+/* buka halaman input sesuai kelas dan scroll ke siswa */
+function openStudentInput(nis){
+    const isK1 = kelas1.find(s=>s.nis===nis);
+    if(isK1){ showPage(2); document.getElementById("kelas1").scrollIntoView({behavior:'smooth'}); highlightCard(nis); }
+    else { showPage(3); document.getElementById("kelas2").scrollIntoView({behavior:'smooth'}); highlightCard(nis); }
+    setTimeout(()=> { const el = document.getElementById('card-'+nis); if(el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 250);
 }
 
-// ========================= RENDER HALAMAN 2 ===============================
-
-function renderInput() {
-    renderKelas("kelas1", kelas1, mapelKelas1);
-    renderKelas("kelas2", kelas2, mapelKelas2);
+function highlightCard(nis){
+    document.querySelectorAll('.card-student').forEach(c => c.style.boxShadow = '');
+    const c = document.getElementById('card-'+nis);
+    if(c) c.style.boxShadow = '0 8px 20px rgba(59,130,246,0.12)';
 }
 
-function renderKelas(divID, dataSiswa, mapelList) {
-    const div = document.getElementById(divID);
-    div.innerHTML = "";
+/* =================== RENDER HALAMAN 2 & 3 (INPUT) =================== */
 
-    dataSiswa.forEach(s => {
-        div.innerHTML += `
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5>${s.nama}</h5>
-                    <small>NIS: ${s.nis} | NISN: ${s.nisn}</small>
-                    <hr>
-                    <div class="mapel-row">
-                        ${mapelList.map(m => mapelForm(s.nama, m)).join("")}
+function renderInput(){
+    renderKelasDiv("kelas1", kelas1, mapelKelas1);
+    renderKelasDiv("kelas2", kelas2, mapelKelas2);
+}
+
+function renderKelasDiv(divId, dataSiswa, mapelList){
+    const container = document.getElementById(divId);
+    container.innerHTML = "";
+    dataSiswa.forEach(s=>{
+        const card = document.createElement('div');
+        card.className = 'card card-student';
+        card.id = 'card-'+s.nis;
+        card.innerHTML = `
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <h5 class="mb-0">${s.nama}</h5>
+                        <small>NIS: ${s.nis} | NISN: ${s.nisn}</small>
                     </div>
+                    <div class="text-end">
+                        <button class="btn btn-primary btn-sm mb-1" onclick="saveStudent('${s.nis}', ${JSON.stringify(mapelList)})">Simpan</button>
+                        <button class="btn btn-outline-primary btn-sm mb-1" onclick="printStudent('${s.nis}')">Print</button>
+                    </div>
+                </div>
+                <hr>
+                <div class="mapel-row">
+                    ${mapelList.map(m => makeMapelHTML(s.nis, m)).join('')}
                 </div>
             </div>
         `;
+        container.appendChild(card);
     });
+
+    // after created, load stored values
+    loadAllFromStorage();
 }
 
-function mapelForm(nama, mapel) {
+/* make single mapel block */
+function makeMapelHTML(nis, mapel){
+    const mid = sanitizeId(mapel);
     return `
         <div class="mapel-item">
-            <p class="mapel-title">${mapel}</p>
-            ${["PE1", "PE2", "PE3"].map(pe =>
-            `<div>
-                <label>${pe}</label>
-                <div id="${nama}-${mapel}-${pe}">
-                    <input type="number" class="form-control mb-1 nilai-box" placeholder="Nilai">
+            <div class="mapel-title">${mapel}</div>
+            ${peList.map(pe => `
+                <div style="margin-bottom:6px;">
+                    <label style="font-size:0.85rem;font-weight:600">${pe}</label>
+                    <div id="inputs-${nis}-${mid}-${pe}">${makeSingleInput(nis, mapel, pe)}</div>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" onclick="tambahNilai('${nis}','${mapel}','${pe}')">+ Tambah Nilai</button>
                 </div>
-                <button class="btn btn-sm btn-primary mb-2" onclick="tambahNilai('${nama}-${mapel}-${pe}')">+ Tambah Nilai</button>
-            </div>`
-            ).join("")}
+            `).join('')}
         </div>
     `;
 }
 
-function tambahNilai(id) {
-    const div = document.getElementById(id);
-    div.innerHTML += `<input type="number" class="form-control mb-1 nilai-box" placeholder="Nilai">`;
+/* default 1 input element returned as html string */
+function makeSingleInput(nis,mapel,pe){
+    return `<input type="number" class="nilai-box" placeholder="Nilai" />`;
 }
 
-// ========================= START ===============================
+/* append new input to container */
+function tambahNilai(nis,mapel,pe){
+    const id = 'inputs-'+nis+'-'+sanitizeId(mapel)+'-'+pe;
+    const cont = document.getElementById(id);
+    if(!cont) return;
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.className = 'nilai-box';
+    inp.placeholder = 'Nilai';
+    cont.appendChild(inp);
+}
+
+/* collect & save student's nilai to localStorage */
+function saveStudent(nis, mapelList){
+    const student = findStudentByNIS(nis);
+    if(!student) return alert('Siswa tidak ditemukan.');
+
+    const nilai = {};
+    mapelList.forEach(mapel => {
+        const mkey = mapel.trim();
+        nilai[mkey] = {};
+        peList.forEach(pe => {
+            const inputs = Array.from(document.querySelectorAll(`#inputs-${nis}-${sanitizeId(mapel)}-${pe} input, #inputs-${nis}-${sanitizeId(mapel)}-${pe} .nilai-box, #inputs-${nis}-${sanitizeId(mapel)}-${pe} input[type="number"]`));
+            // fallback: if the created inputs are direct children (we used inputs, not nested). Use querySelectorAll inside container.
+            const container = document.getElementById(`inputs-${nis}-${sanitizeId(mapel)}-${pe}`);
+            const vals = [];
+            if(container){
+                container.querySelectorAll('input').forEach(i => {
+                    const v = i.value.trim();
+                    if(v !== '') vals.push(Number(v));
+                });
+            }
+            nilai[mkey][pe] = vals; // array of numbers (could be empty)
+        });
+    });
+
+    localStorage.setItem('nilai_'+nis, JSON.stringify({ siswa: student, nilai }));
+    // visual feedback
+    const btns = document.querySelectorAll(`#card-${nis} .btn-primary`);
+    btns.forEach(b => {
+        b.innerText = 'Tersimpan ✓';
+        setTimeout(()=> b.innerText = 'Simpan', 1100);
+    });
+}
+
+/* load a student's stored nilai into inputs (if exist) */
+function loadStudentToInputs(nis){
+    const raw = localStorage.getItem('nilai_'+nis);
+    if(!raw) return;
+    try{
+        const data = JSON.parse(raw);
+        const nilai = data.nilai || {};
+        Object.keys(nilai).forEach(mapel => {
+            peList.forEach(pe => {
+                const arr = nilai[mapel] && nilai[mapel][pe] ? nilai[mapel][pe] : [];
+                const container = document.getElementById(`inputs-${nis}-${sanitizeId(mapel)}-${pe}`);
+                if(!container) return;
+                // clear existing inputs then re-create according to saved
+                container.innerHTML = '';
+                if(arr.length === 0){
+                    // create one empty input (so UI consistent)
+                    const inp = document.createElement('input'); inp.type='number'; inp.className='nilai-box'; inp.placeholder='Nilai';
+                    container.appendChild(inp);
+                } else {
+                    arr.forEach(v => {
+                        const inp = document.createElement('input'); inp.type='number'; inp.className='nilai-box'; inp.placeholder='Nilai'; inp.value = v;
+                        container.appendChild(inp);
+                    });
+                }
+            });
+        });
+    } catch(e){ console.error(e); }
+}
+
+/* load all students from storage */
+function loadAllFromStorage(){
+    [...kelas1, ...kelas2].forEach(s => loadStudentToInputs(s.nis));
+}
+
+/* find student object by nis */
+function findStudentByNIS(nis){
+    return kelas1.find(s=>s.nis===nis) || kelas2.find(s=>s.nis===nis) || null;
+}
+
+/* =================== PRINT PER ORANG =================== */
+
+/* Create printable HTML for a student and open new window to print */
+function printStudent(nis){
+    const student = findStudentByNIS(nis);
+    if(!student) return alert('Siswa tidak ditemukan.');
+
+    // prefer stored data; if none, collect current inputs (so user can print unsaved changes)
+    let saved = localStorage.getItem('nilai_'+nis);
+    let obj;
+    if(saved){
+        obj = JSON.parse(saved);
+    } else {
+        // build nilai from current inputs
+        const nilai = {};
+        const mapelList = kelas1.find(s=>s.nis===nis) ? mapelKelas1 : mapelKelas2;
+        mapelList.forEach(mapel => {
+            nilai[mapel.trim()] = {};
+            peList.forEach(pe => {
+                const container = document.getElementById(`inputs-${nis}-${sanitizeId(mapel)}-${pe}`);
+                const arr = [];
+                if(container){
+                    container.querySelectorAll('input').forEach(i => { if(i.value.trim() !== '') arr.push(Number(i.value)); });
+                }
+                nilai[mapel.trim()][pe] = arr;
+            });
+        });
+        obj = { siswa: student, nilai };
+    }
+
+    // build HTML
+    const win = window.open('','_blank','width=900,height=700');
+    const style = `
+        <style>
+            body{ font-family: Arial, Helvetica, sans-serif; padding:18px; color:#1f2937; }
+            .print-header{ background: linear-gradient(90deg, #d9ecff 0%, #eef8ff 100%); padding:12px; border-radius:8px; text-align:center; margin-bottom:12px; border:1px solid #cfe8ff; }
+            h2{ margin:0; font-size:18px; color:#0f172a; }
+            .meta{ margin-top:10px; display:grid; grid-template-columns: 1fr 1fr; gap:6px 22px; }
+            .meta .item{ font-size:14px; }
+            .meta .label{ font-weight:700; width:110px; display:inline-block; }
+            table{ width:100%; border-collapse:collapse; margin-top:12px; }
+            table th, table td{ border:1px solid #e6f3ff; padding:8px; text-align:left; }
+            table thead th{ background: #d9ecff; font-weight:700; }
+            .small-note{ font-size:12px; color:#475569; margin-top:8px; }
+        </style>
+    `;
+
+    // meta fields per user's specified layout
+    const semester = 'GANJIL';
+    const fase = 'Penilaian Pekan Evaluasi';
+    const htmlMeta = `
+        <div class="print-header">
+            <h2>PEKAN EVALUASI SEMESTER GANJIL</h2>
+            <div style="margin-top:6px; font-size:13px; color:#0f172a;">${sekolah.nama}</div>
+        </div>
+
+        <div class="meta">
+            <div class="item"><span class="label">Nama</span>: ${student.nama}</div>
+            <div class="item"><span class="label">Semester</span>: ${semester}</div>
+
+            <div class="item"><span class="label">Kelas</span>: ${ kelas1.find(s=>s.nis===nis) ? '1' : '2' }</div>
+            <div class="item"><span class="label">Fase</span>: ${fase}</div>
+
+            <div class="item"><span class="label">NIS</span>: ${student.nis}</div>
+            <div class="item"><span class="label">Nama Sekolah</span>: ${sekolah.nama}</div>
+
+            <div class="item"><span class="label">NISN</span>: ${student.nisn}</div>
+            <div class="item"><span class="label">Alamat Sekolah</span>: ${sekolah.alamat}</div>
+
+            <div class="item"><span class="label">Tahun Ajaran</span>: ${sekolah.tahunAjaran}</div>
+            <div class="item"></div>
+        </div>
+    `;
+
+    // build subjects table
+    const nilai = obj.nilai || {};
+    const mapelKeys = Object.keys(nilai);
+    let tableHtml = `<table><thead><tr><th>Mapel</th><th>PE</th></tr></thead><tbody>`;
+    mapelKeys.forEach(mp=>{
+        const peObj = nilai[mp];
+        // create single row that lists PE1:[..], PE2:[..], PE3:[..]
+        const peParts = peList.map(pe => `${pe}: ${ (peObj && peObj[pe] && peObj[pe].length)? peObj[pe].join(', '): '-' }`).join('<br>');
+        tableHtml += `<tr><td style="width:50%">${mp}</td><td>${peParts}</td></tr>`;
+    });
+    tableHtml += `</tbody></table>`;
+
+    // final html
+    win.document.open();
+    win.document.write(`<html><head><title>Print - ${student.nama}</title>${style}</head><body>${htmlMeta}${tableHtml}<div class="small-note">Dicetak dari sistem penilaian - ${new Date().toLocaleString()}</div></body></html>`);
+    win.document.close();
+
+    // print after short delay to allow render
+    setTimeout(()=> { win.print(); }, 400);
+}
+
+/* =================== INIT =================== */
 
 renderTable();
 renderInput();

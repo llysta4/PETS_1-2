@@ -1,153 +1,157 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nilai Rapor</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rapor SD – Dua Halaman</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <style>
-    /* TABEL INPUT (LAYAR BIASA) */
-    .table-input {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .table-input th, .table-input td {
-        border: 1px solid black;
-        padding: 6px;
-        text-align: center;
-    }
+    body { padding: 20px; }
+    .page { display: none; }
+    .active { display: block; }
+    table { font-size: 14px; }
+    th, td { text-align: center; }
 
-    /* TABEL PRINT DISSEMBUNYIKAN DI LAYAR */
-    .print-view {
-        display: none;
-    }
-
-    /* ===============================
-       MODE PRINT
-       =============================== */
+    /* PRINT MODE */
     @media print {
+        body * { visibility: hidden; }
+        .print-area, .print-area * { visibility: visible; }
+        .print-area { position: absolute; top: 0; left: 0; width: 100%; }
 
-        body * {
-            visibility: hidden;
+        .identitas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
-        .print-area, .print-area * {
-            visibility: visible;
-        }
-        .print-area {
-            position: absolute;
-            left: 0;
-            top: 0;
+
+        .print-table {
             width: 100%;
-        }
-
-        /* HANYA TABEL PRINT YANG MUNCUL */
-        .print-view {
-            display: block;
             border-collapse: collapse;
-            width: 100%;
+            font-size: 14px;
         }
-        .print-view th, .print-view td {
-            border: 1px solid black;
-            padding: 6px;
-            text-align: left;
+        .print-table th {
+            background: #b4d4ff;
         }
-
-        /* SEMBUNYIKAN TABEL INPUT SAAT PRINT */
-        .table-input {
-            display: none;
+        .print-table th, .print-table td {
+            border: 1px solid #000;
+            padding: 4px;
         }
     }
 </style>
 </head>
 <body>
 
-<h2>Input Nilai (Singkatan)</h2>
+<h2 class="text-center">Rapor SD - Dua Halaman</h2>
+<div class="d-flex gap-2 mb-3">
+    <button class="btn btn-primary" onclick="showPage(1)">Halaman 1</button>
+    <button class="btn btn-primary" onclick="showPage(2)">Halaman 2</button>
+    <button class="btn btn-success" onclick="window.print()">Print</button>
+</div>
 
-<table class="table-input">
-    <tr>
-        <th>Mapel</th>
-        <th>PE 1</th>
-        <th>PE 2</th>
-        <th>PE 3</th>
-    </tr>
+<!-- ===================== HALAMAN 1 ===================== -->
+<div id="page1" class="page active">
+    <h4><b>HALAMAN 1 – DATA SISWA</b></h4>
 
-    <tr>
-        <td>MTK</td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-    </tr>
+    <h5>Kelas 1</h5>
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>NIS</th>
+                <th>NISN</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="kelas1_body"></tbody>
+    </table>
 
-    <tr>
-        <td>B.Indo</td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-    </tr>
+    <h5 class="mt-4">Kelas 2</h5>
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>NIS</th>
+                <th>NISN</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="kelas2_body"></tbody>
+    </table>
+</div>
 
-    <tr>
-        <td>IPA</td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-        <td><input type="number"></td>
-    </tr>
+<!-- ===================== HALAMAN 2 ===================== -->
+<div id="page2" class="page">
+    <h4><b>HALAMAN 2 – NILAI PE</b></h4>
 
-</table>
+    <h5>Kelas 1</h5>
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>PABP</th><th>PP</th><th>BI</th><th>MAT</th><th>PJOK</th><th>SBdP</th><th>BS</th><th>PLH</th><th>B.ING</th><th>TIK</th>
+            </tr>
+        </thead>
+        <tbody id="nilai1_body"></tbody>
+    </table>
 
-<button onclick="window.print()">Print</button>
+    <h5 class="mt-4">Kelas 2</h5>
+    <table class="table table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>No</th>
+                <th>Nama</th>
+                <th>PABP</th><th>PP</th><th>BI</th><th>MAT</th><th>PJOK</th><th>SBdP</th><th>BS</th><th>PLH</th><th>B.ING</th><th>TIK</th><th>Pramuka</th>
+            </tr>
+        </thead>
+        <tbody id="nilai2_body"></tbody>
+    </table>
+</div>
 
-<!-- =======================
-     AREA PRINT
-     ======================= -->
+<!-- ===================== PRINT AREA ===================== -->
 <div class="print-area">
-    <h2 style="text-align:center">RAPOR SISWA</h2>
+    <h3 class="text-center">RAPOR SISWA</h3>
 
-    <table class="print-view">
-        <tr>
-            <th>Mata Pelajaran</th>
-            <th>Nilai</th>
-        </tr>
+    <div class="identitas">
+        <div>
+            Nama: <span id="p_nama"></span><br>
+            NIS: <span id="p_nis"></span><br>
+            NISN: <span id="p_nisn"></span><br>
+            Kelas: <span id="p_kelas"></span><br>
+        </div>
+        <div>
+            Semester: <span id="p_semester"></span><br>
+            Fase: <span id="p_fase"></span><br>
+            Tahun Ajaran: <span id="p_ta"></span><br>
+            Nama Sekolah: <span id="p_sekolah"></span><br>
+            Alamat: <span id="p_alamat"></span><br>
+        </div>
+    </div>
 
-        <tr>
-            <td>Matematika</td>
-            <td id="pmtk"></td>
-        </tr>
-
-        <tr>
-            <td>Bahasa Indonesia</td>
-            <td id="pbindo"></td>
-        </tr>
-
-        <tr>
-            <td>Ilmu Pengetahuan Alam</td>
-            <td id="pipa"></td>
-        </tr>
-
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Mapel</th>
+                <th>PE1</th>
+                <th>PE2</th>
+                <th>PE3</th>
+            </tr>
+        </thead>
+        <tbody id="print_nilai_body"></tbody>
     </table>
 </div>
 
 <script>
-    function ambilNilai() {
-        const inputRows = document.querySelectorAll(".table-input tr");
-
-        document.getElementById("pmtk").innerText =
-            ambilSatuBaris(inputRows[1]);
-
-        document.getElementById("pbindo").innerText =
-            ambilSatuBaris(inputRows[2]);
-
-        document.getElementById("pipa").innerText =
-            ambilSatuBaris(inputRows[3]);
-    }
-
-    function ambilSatuBaris(row) {
-        let inputs = row.querySelectorAll("input");
-        return `PE1: ${inputs[0].value}, PE2: ${inputs[1].value}, PE3: ${inputs[2].value}`;
-    }
-
-    // Saat print, otomatis perbarui nilai
-    window.onbeforeprint = ambilNilai;
+function showPage(pg) {
+    document.getElementById("page1").classList.remove("active");
+    document.getElementById("page2").classList.remove("active");
+    document.getElementById("page" + pg).classList.add("active");
+}
 </script>
-
 </body>
 </html>

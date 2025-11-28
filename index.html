@@ -12,10 +12,10 @@
     <!-- NAVBAR -->
     <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
-            <a class="nav-link active" onclick="showData()">DATA</a>
+            <button class="nav-link active" onclick="showData()">DATA</button>
         </li>
         <li class="nav-item">
-            <a class="nav-link" onclick="showInput()">INPUT NILAI</a>
+            <button class="nav-link" onclick="showInput()">INPUT NILAI</button>
         </li>
     </ul>
 
@@ -46,7 +46,6 @@
 
         <div id="dataSiswa"></div>
 
-        <!-- VALUE UP -->
         <div class="d-flex justify-content-between mt-3">
             <button class="btn btn-secondary" onclick="prevSiswa()">⬅ Sebelumnya</button>
             <button class="btn btn-secondary" onclick="nextSiswa()">Selanjutnya ➡</button>
@@ -71,8 +70,12 @@
         <button class="btn btn-success" onclick="addMapel()">Tambah Mapel</button>
     </div>
 
+
+<!-- ======================= JAVASCRIPT ======================= -->
 <script>
 let selectedIndex = null;
+
+// ======================= NAVBAR =======================
 
 function showData() {
     document.getElementById("dataTab").style.display = "block";
@@ -85,7 +88,8 @@ function showInput() {
     document.getElementById("inputTab").style.display = "block";
 }
 
-// Tambah siswa
+// ======================= TAMBAH SISWA =======================
+
 function addRow() {
     let table = document.getElementById("tableSiswa");
     let row = document.createElement("tr");
@@ -101,17 +105,20 @@ function addRow() {
             <button class="btn btn-info btn-sm" onclick="printSiswa(this)">Print</button>
         </td>
     `;
+
     table.appendChild(row);
 }
 
-// Masuk halaman input nilai
+// ======================= INPUT NILAI =======================
+
 function inputNilai(button) {
+    let table = document.getElementById("tableSiswa");
     let row = button.parentElement.parentElement;
-    selectedIndex = row.rowIndex - 1; // index siswa
+
+    selectedIndex = row.rowIndex - 1; // baris index
 
     loadSiswaData();
     loadNilaiTable();
-
     showInput();
 }
 
@@ -134,7 +141,8 @@ function loadSiswaData() {
     `;
 }
 
-// BUTTON NEXT (VALUE UP)
+// ======================= VALUE UP =======================
+
 function nextSiswa() {
     let table = document.getElementById("tableSiswa");
     if (selectedIndex < table.rows.length - 1) {
@@ -144,7 +152,6 @@ function nextSiswa() {
     }
 }
 
-// BUTTON PREVIOUS
 function prevSiswa() {
     if (selectedIndex > 0) {
         selectedIndex--;
@@ -153,7 +160,8 @@ function prevSiswa() {
     }
 }
 
-// Tambah mapel ke tabel nilai
+// ======================= TABEL NILAI =======================
+
 function addMapel() {
     let table = document.getElementById("inputNilaiTable");
     let row = document.createElement("tr");
@@ -169,12 +177,12 @@ function addMapel() {
     table.appendChild(row);
 }
 
-// Load nilai (masih kosong karena tanpa database)
 function loadNilaiTable() {
     document.getElementById("inputNilaiTable").innerHTML = "";
 }
 
-// Print data siswa
+// ======================= PRINT =======================
+
 function printSiswa(button) {
     let row = button.parentElement.parentElement;
 
@@ -185,4 +193,18 @@ function printSiswa(button) {
     let nisn = row.children[4].children[0].value;
 
     let win = window.open("", "_blank");
-    win.document
+    win.document.write(`
+        <h3>DATA SISWA</h3>
+        <p><b>No Absen:</b> ${no}</p>
+        <p><b>Nama:</b> ${nama}</p>
+        <p><b>Kelas:</b> ${kelas}</p>
+        <p><b>NIS:</b> ${nis}</p>
+        <p><b>NISN:</b> ${nisn}</p>
+        <hr>
+        <button onclick="window.print()">Print Sekarang</button>
+    `);
+}
+</script>
+
+</body>
+</html>

@@ -3,417 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEKAN EVALUASI SEMESTER GANJIL</title>
+    <title>PEKAN EVALUASI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Variabel Warna */
-        :root {
-            --primary-color: #007bff; /* Biru Bootstrap */
-            --header-bg-color: #f2f2f2; /* Abu-abu terang untuk header tabel */
-        }
-
-        body { font-family: Arial, sans-serif; }
-        .navbar { background-color: var(--primary-color); }
-        .navbar a { color: white; }
-        .print-layout { display: none; }
-        
-        /* Gaya Khusus untuk Layout Print */
-        @media print {
-            body * { visibility: hidden; }
-            .print-layout, .print-layout * { visibility: visible; }
-            .print-layout { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                margin: 0 auto; 
-                padding: 5mm 10mm; 
-                box-sizing: border-box;
-                font-size: 10pt; 
-            }
-            
-            /* Judul Berwarna dan di Tengah */
-            .print-layout h2 { 
-                color: var(--primary-color); 
-                text-align: center; 
-                margin-bottom: 15px;
-                font-size: 1.2rem; 
-                text-transform: uppercase;
-            }
-            
-            /* Kotak Identitas Siswa */
-            .identity-box {
-                border: 1px solid black; 
-                padding: 10px;
-                margin: 0 auto 20px auto; 
-                width: 95%; 
-                line-height: 1.5;
-            }
-
-            /* Tata Letak 2 Kolom di dalam Kotak Identitas */
-            .identity-section { 
-                display: flex; 
-                justify-content: space-between; 
-                font-size: 0.9rem; 
-            }
-            .identity-left, .identity-right { 
-                width: 49%; 
-            }
-            .identity-section p { 
-                margin: 0; 
-                padding: 1px 0;
-                word-wrap: break-word; 
-            }
-            
-            /* Styling Tabel Print */
-            .print-layout table {
-                width: 95%; 
-                margin: 0 auto; 
-                border-collapse: collapse;
-                font-size: 0.9rem;
-            }
-            .print-layout th, .print-layout td {
-                border: 1px solid black !important; 
-                padding: 6px;
-                vertical-align: top;
-            }
-            /* Header Tabel Di Tengah */
-            .print-layout th {
-                background-color: var(--header-bg-color) !important; 
-                color: black !important;
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-                text-align: center; 
-            }
-
-            /* Perbaikan Jarak dan Tanda Tangan */
-            .signature-section { 
-                margin-top: 50px; 
-                display: flex; 
-                justify-content: space-around; 
-                width: 80%; 
-                margin-left: 10%; 
-            }
-
-            .signature-box { 
-                width: 45%; 
-                text-align: center; 
-                padding-top: 5px; 
-            }
-            /* Menghilangkan Garis Bawah di TTD */
-            .signature-line {
-                display: block;
-                width: 90%;
-                margin: 30px auto 0; 
-                text-align: center;
-                height: 15px;
-                font-weight: bold;
-                line-height: 15px; 
-            }
-        }
-        /* Aturan Non-Print */
-        .identity-section { 
-            display: flex; 
-            justify-content: space-between; 
-        }
-        .identity-left, .identity-right { width: 48%; }
-        
-        #print-layout { display: none; }
-    </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">PEKAN EVALUASI SEMESTER GANJIL</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="#" onclick="showPage('data')">DATA</a>
-                <a class="nav-link" href="#" onclick="showPage('input')">INPUT</a>
-            </div>
-        </div>
-    </nav>
 
-    <div id="data-page" class="container mt-4">
-        <h2>Data Siswa</h2>
-        <table class="table table-striped" id="data-table">
-            <thead>
+<body class="p-4">
+
+    <!-- NAVBAR -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" onclick="showData()">DATA</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" onclick="showInput()">INPUT NILAI</a>
+        </li>
+    </ul>
+
+    <!-- TAB DATA -->
+    <div id="dataTab">
+        <h3 class="mb-3">DATA SISWA</h3>
+
+        <button class="btn btn-primary mb-3" onclick="addRow()">Tambah Siswa</button>
+
+        <table class="table table-bordered">
+            <thead class="table-dark">
                 <tr>
+                    <th>No Absen</th>
                     <th>Nama</th>
-                    <th>NIS</th>
                     <th>Kelas</th>
+                    <th>NIS</th>
+                    <th>NISN</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
-            <tbody></tbody>
+            <tbody id="tableSiswa"></tbody>
         </table>
     </div>
 
-    <div id="input-page" class="container mt-4" style="display: none;">
-        <h2>Input Data Siswa</h2>
-        <form id="input-form">
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Nama:</label>
-                    <input type="text" class="form-control" id="nama" required>
-                </div>
-                <div class="col-md-6">
-                    <label>NIS:</label>
-                    <input type="text" class="form-control" id="nis" required>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>NISN:</label>
-                    <input type="text" class="form-control" id="nisn" required>
-                </div>
-                <div class="col-md-6">
-                    <label>Kelas:</label>
-                    <select class="form-control" id="kelas" required onchange="updateMapel()">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Fase:</label>
-                    <input type="text" class="form-control" id="fase" required>
-                </div>
-                <div class="col-md-6">
-                    <label>Tahun Ajaran:</label>
-                    <input type="text" class="form-control" id="tahunAjaran" required>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <label>Nama Sekolah:</label>
-                    <input type="text" class="form-control" id="namaSekolah" required>
-                </div>
-                <div class="col-md-6">
-                    <label>Alamat Sekolah:</label>
-                    <input type="text" class="form-control" id="alamatSekolah" required>
-                </div>
-            </div>
-            <div id="mapel-container">
-                </div>
-            <button type="button" class="btn btn-primary mt-3" onclick="saveData()">Simpan</button>
-        </form>
-    </div>
+    <!-- TAB INPUT -->
+    <div id="inputTab" style="display:none;">
+        <h3 class="mb-3">INPUT NILAI SISWA</h3>
 
-    <div id="print-layout" class="print-layout">
-        <h2 class="text-center">PEKAN EVALUASI SEMESTER GANJIL</h2>
-        
-        <div class="identity-box">
-            <div class="identity-section">
-                <div class="identity-left">
-                    <p><strong>Nama Sekolah:</strong> <span id="print-namaSekolah"></span></p>
-                    <p><strong>Alamat Sekolah:</strong> <span id="print-alamatSekolah"></span></p>
-                    <p><strong>Tahun Ajaran:</strong> <span id="print-tahunAjaran"></span></p>
-                    <p><strong>Fase:</strong> <span id="print-fase"></span></p>
-                </div>
-                <div class="identity-right">
-                    <p><strong>Nama:</strong> <span id="print-nama"></span></p>
-                    <p><strong>NIS:</strong> <span id="print-nis"></span></p>
-                    <p><strong>NISN:</strong> <span id="print-nisn"></span></p>
-                    <p><strong>Kelas:</strong> <span id="print-kelas"></span></p>
-                </div>
-            </div>
+        <div id="dataSiswa"></div>
+
+        <!-- VALUE UP -->
+        <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-secondary" onclick="prevSiswa()">⬅ Sebelumnya</button>
+            <button class="btn btn-secondary" onclick="nextSiswa()">Selanjutnya ➡</button>
         </div>
-        
-        <table class="table table-bordered mt-4">
-            <thead>
+
+        <hr>
+
+        <h4>Nilai PE</h4>
+        <table class="table table-bordered mt-3">
+            <thead class="table-light">
                 <tr>
-                    <th width="5%">NO</th>
-                    <th width="60%">MATA PELAJARAN</th>
-                    <th width="10%">PE 1</th>
-                    <th width="10%">PE 2</th>
-                    <th width="15%">PE 3</th>
+                    <th>No</th>
+                    <th>Mata Pelajaran</th>
+                    <th>PE 1</th>
+                    <th>PE 2</th>
+                    <th>PE 3</th>
                 </tr>
             </thead>
-            <tbody id="print-table-body"></tbody>
+            <tbody id="inputNilaiTable"></tbody>
         </table>
-        
-        <div class="signature-section">
-            <div class="signature-box">
-                <p>Orang Tua</p>
-                <div class="signature-line">(........................................)</div>
-            </div>
-            <div class="signature-box">
-                <p>Wali Kelas</p>
-                <div class="signature-line">(........................................)</div>
-            </div>
-        </div>
+
+        <button class="btn btn-success" onclick="addMapel()">Tambah Mapel</button>
     </div>
-    <script>
-        let students = JSON.parse(localStorage.getItem('students')) || [];
-        let editingIndex = -1;
 
-        const mapelKelas1 = [
-            "PENDIDIKAN AGAMA DAN BUDI PEKERTI", "PENDIDIKAN PANCASILA", "BAHASA INDONESIA", "MATEMATIKA", "PJOK", "SBdP", "BAHASA SUNDA", "PLH", "BAHASA INGGRIS", "TIK"
-        ];
-        const mapelKelas2 = [
-           "PENDIDIKAN AGAMA DAN BUDI PEKERTI", "PENDIDIKAN PANCASILA", "BAHASA INDONESIA", "MATEMATIKA", "PJOK", "SBdP", "BAHASA SUNDA", "PLH", "BAHASA INGGRIS", "TIK", "PRAMUKA"
-        ];
+<script>
+let selectedIndex = null;
 
-        function showPage(page) {
-            document.getElementById('data-page').style.display = page === 'data' ? 'block' : 'none';
-            document.getElementById('input-page').style.display = page === 'input' ? 'block' : 'none';
-            if (page === 'data') loadData();
-        }
+function showData() {
+    document.getElementById("dataTab").style.display = "block";
+    document.getElementById("inputTab").style.display = "none";
+}
 
-        function updateMapel() {
-            const kelas = document.getElementById('kelas').value;
-            const mapelList = kelas === '1' ? mapelKelas1 : mapelKelas2;
-            const container = document.getElementById('mapel-container');
-            container.innerHTML = '';
-            mapelList.forEach((mapel, index) => {
-                const div = document.createElement('div');
-                div.className = 'mb-3';
-                div.innerHTML = `
-                    <h5>${mapel}</h5>
-                    <div class="row">
-                        <div class="col-4">
-                            <label>PE 1:</label>
-                            <input type="text" class="form-control" placeholder="Nilai PE 1" data-mapel="${index}" data-pe="0">
-                        </div>
-                        <div class="col-4">
-                            <label>PE 2:</label>
-                            <input type="text" class="form-control" placeholder="Nilai PE 2" data-mapel="${index}" data-pe="1">
-                        </div>
-                        <div class="col-4">
-                            <label>PE 3:</label>
-                            <input type="text" class="form-control" placeholder="Nilai PE 3" data-mapel="${index}" data-pe="2">
-                        </div>
-                    </div>
-                `;
-                // Keterangan dihilangkan sesuai permintaan
-                container.appendChild(div);
-            });
-        }
+function showInput() {
+    if (selectedIndex === null) return;
+    document.getElementById("dataTab").style.display = "none";
+    document.getElementById("inputTab").style.display = "block";
+}
 
-        function saveData() {
-            const kelas = document.getElementById('kelas').value;
-            const mapelList = kelas === '1' ? mapelKelas1 : mapelKelas2;
-            const mapelData = mapelList.map((mapel, index) => {
-                // Ambil nilai PE 1, PE 2, dan PE 3
-                const nilaiPE = [
-                    document.querySelector(`input[data-mapel="${index}"][data-pe="0"]`).value,
-                    document.querySelector(`input[data-mapel="${index}"][data-pe="1"]`).value,
-                    document.querySelector(`input[data-mapel="${index}"][data-pe="2"]`).value,
-                ];
-                
-                // Simpan hanya nilai PE
-                return { nama: mapel, nilai: nilaiPE };
-            });
+// Tambah siswa
+function addRow() {
+    let table = document.getElementById("tableSiswa");
+    let row = document.createElement("tr");
 
-            const student = {
-                nama: document.getElementById('nama').value,
-                nis: document.getElementById('nis').value,
-                nisn: document.getElementById('nisn').value,
-                kelas,
-                fase: document.getElementById('fase').value,
-                tahunAjaran: document.getElementById('tahunAjaran').value,
-                namaSekolah: document.getElementById('namaSekolah').value,
-                alamatSekolah: document.getElementById('alamatSekolah').value,
-                mapel: mapelData
-            };
+    row.innerHTML = `
+        <td><input type="number" class="form-control" placeholder="No"></td>
+        <td><input class="form-control" placeholder="Nama"></td>
+        <td><input class="form-control" placeholder="Kelas"></td>
+        <td><input class="form-control" placeholder="NIS"></td>
+        <td><input class="form-control" placeholder="NISN"></td>
+        <td>
+            <button class="btn btn-warning btn-sm" onclick="inputNilai(this)">Input Nilai</button>
+            <button class="btn btn-info btn-sm" onclick="printSiswa(this)">Print</button>
+        </td>
+    `;
+    table.appendChild(row);
+}
 
-            if (editingIndex >= 0) {
-                students[editingIndex] = student;
-                editingIndex = -1;
-            } else {
-                students.push(student);
-            }
+// Masuk halaman input nilai
+function inputNilai(button) {
+    let row = button.parentElement.parentElement;
+    selectedIndex = row.rowIndex - 1; // index siswa
 
-            localStorage.setItem('students', JSON.stringify(students));
-            document.getElementById('input-form').reset();
-            showPage('data');
-        }
+    loadSiswaData();
+    loadNilaiTable();
 
-        function loadData() {
-            const tbody = document.querySelector('#data-table tbody');
-            tbody.innerHTML = '';
-            students.forEach((student, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student.nama}</td>
-                    <td>${student.nis}</td>
-                    <td>${student.kelas}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editStudent(${index})">Edit</button>
-                        <button class="btn btn-info btn-sm" onclick="printStudent(${index})">Print</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
+    showInput();
+}
 
-        function editStudent(index) {
-            const student = students[index];
-            document.getElementById('nama').value = student.nama;
-            document.getElementById('nis').value = student.nis;
-            document.getElementById('nisn').value = student.nisn;
-            document.getElementById('kelas').value = student.kelas;
-            document.getElementById('fase').value = student.fase;
-            document.getElementById('tahunAjaran').value = student.tahunAjaran;
-            document.getElementById('namaSekolah').value = student.namaSekolah;
-            document.getElementById('alamatSekolah').value = student.alamatSekolah;
-            updateMapel(); // Panggil updateMapel untuk membuat ulang input
-            
-            // Isi nilai PE yang sudah ada
-            student.mapel.forEach((m, i) => {
-                // Pastikan nilai PE ada (minimal 3, jika tidak, anggap kosong)
-                const nilai = m.nilai || ["", "", ""]; 
-                
-                // Isi input PE 1, PE 2, PE 3
-                document.querySelector(`input[data-mapel="${i}"][data-pe="0"]`).value = nilai[0] || '';
-                document.querySelector(`input[data-mapel="${i}"][data-pe="1"]`).value = nilai[1] || '';
-                document.querySelector(`input[data-mapel="${i}"][data-pe="2"]`).value = nilai[2] || '';
-            });
-            
-            editingIndex = index;
-            showPage('input');
-        }
+function loadSiswaData() {
+    let table = document.getElementById("tableSiswa");
+    let row = table.rows[selectedIndex];
 
+    let no = row.children[0].children[0].value;
+    let nama = row.children[1].children[0].value;
+    let kelas = row.children[2].children[0].value;
+    let nis = row.children[3].children[0].value;
+    let nisn = row.children[4].children[0].value;
 
-        function printStudent(index) {
-            const student = students[index];
-            
-            // Mengisi data identitas
-            document.getElementById('print-namaSekolah').textContent = student.namaSekolah;
-            document.getElementById('print-alamatSekolah').textContent = student.alamatSekolah;
-            document.getElementById('print-tahunAjaran').textContent = student.tahunAjaran;
-            document.getElementById('print-fase').textContent = student.fase;
-            document.getElementById('print-nama').textContent = student.nama;
-            document.getElementById('print-nis').textContent = student.nis;
-            document.getElementById('print-nisn').textContent = student.nisn;
-            document.getElementById('print-kelas').textContent = student.kelas;
+    document.getElementById("dataSiswa").innerHTML = `
+        <p><b>No Absen:</b> ${no}</p>
+        <p><b>Nama:</b> ${nama}</p>
+        <p><b>Kelas:</b> ${kelas}</p>
+        <p><b>NIS:</b> ${nis}</p>
+        <p><b>NISN:</b> ${nisn}</p>
+    `;
+}
 
-            const tbody = document.getElementById('print-table-body');
-            tbody.innerHTML = '';
-            student.mapel.forEach((m, i) => {
-                const nilai = m.nilai || ["", "", ""]; // Ambil 3 nilai PE
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-center">${i + 1}</td>
-                    <td>${m.nama}</td>
-                    <td class="text-center">${nilai[0] || '-'}</td>
-                    <td class="text-center">${nilai[1] || '-'}</td>
-                    <td class="text-center">${nilai[2] || '-'}</td>
-                `;
-                tbody.appendChild(row);
-            });
+// BUTTON NEXT (VALUE UP)
+function nextSiswa() {
+    let table = document.getElementById("tableSiswa");
+    if (selectedIndex < table.rows.length - 1) {
+        selectedIndex++;
+        loadSiswaData();
+        loadNilaiTable();
+    }
+}
 
-            // Tampilkan print-layout sementara untuk print
-            document.getElementById('print-layout').style.display = 'block';
-            window.print();
-            document.getElementById('print-layout').style.display = 'none';
-        }
+// BUTTON PREVIOUS
+function prevSiswa() {
+    if (selectedIndex > 0) {
+        selectedIndex--;
+        loadSiswaData();
+        loadNilaiTable();
+    }
+}
 
-        // Initialize saat halaman load
-        window.addEventListener('load', () => {
-            showPage('data');
-            updateMapel();
-        });
-    </script>
-</body>
-</html>
+// Tambah mapel ke tabel nilai
+function addMapel() {
+    let table = document.getElementById("inputNilaiTable");
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${table.rows.length + 1}</td>
+        <td><input class="form-control" placeholder="Mapel"></td>
+        <td><input class="form-control" placeholder="Nilai"></td>
+        <td><input class="form-control" placeholder="Nilai"></td>
+        <td><input class="form-control" placeholder="Nilai"></td>
+    `;
+
+    table.appendChild(row);
+}
+
+// Load nilai (masih kosong karena tanpa database)
+function loadNilaiTable() {
+    document.getElementById("inputNilaiTable").innerHTML = "";
+}
+
+// Print data siswa
+function printSiswa(button) {
+    let row = button.parentElement.parentElement;
+
+    let no = row.children[0].children[0].value;
+    let nama = row.children[1].children[0].value;
+    let kelas = row.children[2].children[0].value;
+    let nis = row.children[3].children[0].value;
+    let nisn = row.children[4].children[0].value;
+
+    let win = window.open("", "_blank");
+    win.document

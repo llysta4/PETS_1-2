@@ -3,206 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEKAN EVALUASI</title>
+    <title>PENILAIAN PEKAN EVALUASI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="p-4">
+<body class="bg-light">
 
-    <!-- NAVBAR -->
-    <ul class="nav nav-tabs mb-4">
-        <li class="nav-item">
-            <button class="nav-link active" onclick="showData()">DATA</button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" onclick="showInput()">INPUT NILAI</button>
-        </li>
-    </ul>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">PEKAN EVALUASI</a>
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link active" href="#" onclick="showPage('dataPage')">Data</a></li>
+            <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('inputPage')">Input</a></li>
+        </ul>
+    </div>
+</nav>
 
-    <!-- TAB DATA -->
-    <div id="dataTab">
-        <h3 class="mb-3">DATA SISWA</h3>
+<!-- DATA PAGE -->
+<div id="dataPage" class="container mt-4">
+    <h3 class="text-primary">DATA SISWA</h3>
 
-        <button class="btn btn-primary mb-3" onclick="addRow()">Tambah Siswa</button>
+    <button class="btn btn-success mb-3" onclick="addStudent()">+ Tambah Siswa</button>
 
-        <table class="table table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>No Absen</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>NIS</th>
-                    <th>NISN</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="tableSiswa"></tbody>
-        </table>
+    <table class="table table-bordered table-striped">
+        <thead class="table-primary">
+            <tr>
+                <th>No Absen</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>NIS</th>
+                <th>NISN</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+    </table>
+</div>
+
+<!-- INPUT PAGE -->
+<div id="inputPage" class="container mt-4" style="display:none;">
+
+    <h3 class="text-primary">INPUT NILAI</h3>
+
+    <!-- IDENTITAS OTOMATIS -->
+    <div class="card p-3 mb-3">
+        <strong>Nama Sekolah:</strong> SD Negeri Contoh 01<br>
+        <strong>Alamat:</strong> Jl. Pendidikan No. 12<br>
+        <strong>Tahun Ajaran:</strong> 2025 / 2026
     </div>
 
-    <!-- TAB INPUT -->
-    <div id="inputTab" style="display:none;">
-        <h3 class="mb-3">INPUT NILAI SISWA</h3>
+    <div class="card p-3">
 
-        <div id="dataSiswa"></div>
+        <!-- FORM SISWA -->
+        <div class="mb-3">
+            <label class="form-label">Nama Siswa</label>
+            <input id="inputNama" class="form-control" readonly>
+        </div>
 
-        <div class="d-flex justify-content-between mt-3">
-            <button class="btn btn-secondary" onclick="prevSiswa()">⬅ Sebelumnya</button>
-            <button class="btn btn-secondary" onclick="nextSiswa()">Selanjutnya ➡</button>
+        <div class="mb-3">
+            <label class="form-label">Kelas</label>
+            <input id="inputKelas" class="form-control" readonly>
         </div>
 
         <hr>
 
-        <h4>Nilai PE</h4>
-        <table class="table table-bordered mt-3">
-            <thead class="table-light">
-                <tr>
-                    <th>No</th>
-                    <th>Mata Pelajaran</th>
-                    <th>PE 1</th>
-                    <th>PE 2</th>
-                    <th>PE 3</th>
-                </tr>
-            </thead>
-            <tbody id="inputNilaiTable"></tbody>
-        </table>
+        <!-- PE 1 -->
+        <h5>PE 1</h5>
+        <div id="pe1Container"></div>
+        <button class="btn btn-outline-primary btn-sm mt-2" onclick="addPE('pe1Container')">+ Tambah Nilai PE 1</button>
 
-        <button class="btn btn-success" onclick="addMapel()">Tambah Mapel</button>
-    </div>
-
-
-<!-- ======================= JAVASCRIPT ======================= -->
-<script>
-let selectedIndex = null;
-
-// ======================= NAVBAR =======================
-
-function showData() {
-    document.getElementById("dataTab").style.display = "block";
-    document.getElementById("inputTab").style.display = "none";
-}
-
-function showInput() {
-    if (selectedIndex === null) return;
-    document.getElementById("dataTab").style.display = "none";
-    document.getElementById("inputTab").style.display = "block";
-}
-
-// ======================= TAMBAH SISWA =======================
-
-function addRow() {
-    let table = document.getElementById("tableSiswa");
-    let row = document.createElement("tr");
-
-    row.innerHTML = `
-        <td><input type="number" class="form-control" placeholder="No"></td>
-        <td><input class="form-control" placeholder="Nama"></td>
-        <td><input class="form-control" placeholder="Kelas"></td>
-        <td><input class="form-control" placeholder="NIS"></td>
-        <td><input class="form-control" placeholder="NISN"></td>
-        <td>
-            <button class="btn btn-warning btn-sm" onclick="inputNilai(this)">Input Nilai</button>
-            <button class="btn btn-info btn-sm" onclick="printSiswa(this)">Print</button>
-        </td>
-    `;
-
-    table.appendChild(row);
-}
-
-// ======================= INPUT NILAI =======================
-
-function inputNilai(button) {
-    let table = document.getElementById("tableSiswa");
-    let row = button.parentElement.parentElement;
-
-    selectedIndex = row.rowIndex - 1; // baris index
-
-    loadSiswaData();
-    loadNilaiTable();
-    showInput();
-}
-
-function loadSiswaData() {
-    let table = document.getElementById("tableSiswa");
-    let row = table.rows[selectedIndex];
-
-    let no = row.children[0].children[0].value;
-    let nama = row.children[1].children[0].value;
-    let kelas = row.children[2].children[0].value;
-    let nis = row.children[3].children[0].value;
-    let nisn = row.children[4].children[0].value;
-
-    document.getElementById("dataSiswa").innerHTML = `
-        <p><b>No Absen:</b> ${no}</p>
-        <p><b>Nama:</b> ${nama}</p>
-        <p><b>Kelas:</b> ${kelas}</p>
-        <p><b>NIS:</b> ${nis}</p>
-        <p><b>NISN:</b> ${nisn}</p>
-    `;
-}
-
-// ======================= VALUE UP =======================
-
-function nextSiswa() {
-    let table = document.getElementById("tableSiswa");
-    if (selectedIndex < table.rows.length - 1) {
-        selectedIndex++;
-        loadSiswaData();
-        loadNilaiTable();
-    }
-}
-
-function prevSiswa() {
-    if (selectedIndex > 0) {
-        selectedIndex--;
-        loadSiswaData();
-        loadNilaiTable();
-    }
-}
-
-// ======================= TABEL NILAI =======================
-
-function addMapel() {
-    let table = document.getElementById("inputNilaiTable");
-    let row = document.createElement("tr");
-
-    row.innerHTML = `
-        <td>${table.rows.length + 1}</td>
-        <td><input class="form-control" placeholder="Mapel"></td>
-        <td><input class="form-control" placeholder="Nilai"></td>
-        <td><input class="form-control" placeholder="Nilai"></td>
-        <td><input class="form-control" placeholder="Nilai"></td>
-    `;
-
-    table.appendChild(row);
-}
-
-function loadNilaiTable() {
-    document.getElementById("inputNilaiTable").innerHTML = "";
-}
-
-// ======================= PRINT =======================
-
-function printSiswa(button) {
-    let row = button.parentElement.parentElement;
-
-    let no = row.children[0].children[0].value;
-    let nama = row.children[1].children[0].value;
-    let kelas = row.children[2].children[0].value;
-    let nis = row.children[3].children[0].value;
-    let nisn = row.children[4].children[0].value;
-
-    let win = window.open("", "_blank");
-    win.document.write(`
-        <h3>DATA SISWA</h3>
-        <p><b>No Absen:</b> ${no}</p>
-        <p><b>Nama:</b> ${nama}</p>
-        <p><b>Kelas:</b> ${kelas}</p>
-        <p><b>NIS:</b> ${nis}</p>
-        <p><b>NISN:</b> ${nisn}</p>
         <hr>
-        <button onclick="window.print()">Print Sekarang</button>
-    `);
+
+        <!-- PE 2 -->
+        <h5>PE 2</h5>
+        <div id="pe2Container"></div>
+        <button class="btn btn-outline-primary btn-sm mt-2" onclick="addPE('pe2Container')">+ Tambah Nilai PE 2</button>
+
+        <hr>
+
+        <!-- PE 3 -->
+        <h5>PE 3</h5>
+        <div id="pe3Container"></div>
+        <button class="btn btn-outline-primary btn-sm mt-2" onclick="addPE('pe3Container')">+ Tambah Nilai PE 3</button>
+
+        <hr>
+
+        <button class="btn btn-success" onclick="saveValues()">Simpan Nilai</button>
+    </div>
+</div>
+
+<script>
+let students = [];
+
+function showPage(page) {
+    document.getElementById("dataPage").style.display = "none";
+    document.getElementById("inputPage").style.display = "none";
+    document.getElementById(page).style.display = "block";
+}
+
+function addStudent() {
+    let no = prompt("Masukkan No Absen:");
+    let nama = prompt("Nama siswa:");
+    let kelas = prompt("Kelas:");
+    let nis = prompt("NIS:");
+    let nisn = prompt("NISN:");
+
+    if(!nama) return;
+
+    students.push({
+        no,
+        nama,
+        kelas,
+        nis,
+        nisn,
+        pe1: [],
+        pe2: [],
+        pe3: []
+    });
+
+    renderTable();
+}
+
+function renderTable() {
+    let html = "";
+    students.forEach((s, i) => {
+        html += `
+            <tr>
+                <td>${s.no}</td>
+                <td>${s.nama}</td>
+                <td>${s.kelas}</td>
+                <td>${s.nis}</td>
+                <td>${s.nisn}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editStudent(${i})">Input</button>
+                    <button class="btn btn-info btn-sm">Print</button>
+                </td>
+            </tr>
+        `;
+    });
+    document.getElementById("studentTable").innerHTML = html;
+}
+
+let currentIndex = null;
+
+function editStudent(index) {
+    currentIndex = index;
+    let s = students[index];
+
+    document.getElementById("inputNama").value = s.nama;
+    document.getElementById("inputKelas").value = s.kelas;
+
+    document.getElementById("pe1Container").innerHTML = "";
+    document.getElementById("pe2Container").innerHTML = "";
+    document.getElementById("pe3Container").innerHTML = "";
+
+    s.pe1.forEach(v => addPE("pe1Container", v));
+    s.pe2.forEach(v => addPE("pe2Container", v));
+    s.pe3.forEach(v => addPE("pe3Container", v));
+
+    showPage("inputPage");
+}
+
+function addPE(containerId, value = "") {
+    let div = document.createElement("div");
+    div.className = "input-group mb-2";
+
+    div.innerHTML = `
+        <input type="number" class="form-control peValue" value="${value}">
+        <button class="btn btn-danger" onclick="this.parentElement.remove()">X</button>
+    `;
+
+    document.getElementById(containerId).appendChild(div);
+}
+
+function saveValues() {
+    let s = students[currentIndex];
+
+    s.pe1 = [...document.querySelectorAll("#pe1Container .peValue")].map(i => i.value);
+    s.pe2 = [...document.querySelectorAll("#pe2Container .peValue")].map(i => i.value);
+    s.pe3 = [...document.querySelectorAll("#pe3Container .peValue")].map(i => i.value);
+
+    alert("Nilai berhasil disimpan!");
+    showPage("dataPage");
+    renderTable();
 }
 </script>
 
